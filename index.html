@@ -78,16 +78,18 @@ imageLoader.load( 'models/UV_Grid_Sm.jpg', function (image) {
   objTexture.needsUpdate = true;
 });
 
+var mainObj;
 var objLoader = new THREE.OBJLoader(manager);
   objLoader.load('models/male02.obj', function(object) {
-    object.traverse(function(child) {
+    mainObj = object;
+    mainObj.traverse(function(child) {
       if (child instanceof THREE.Mesh) {
         child.material.map = objTexture;
       }
     });
-    object.position.set(0, -.5, -1);
-    object.scale.set(.005, .005, .005);
-    scene.add(object);
+    mainObj.position.set(0, -.5, -1);
+    mainObj.scale.set(.005, .005, .005);
+    scene.add(mainObj);
 
 }, onProgress, onError);
 
@@ -111,6 +113,22 @@ var skybox = new THREE.Mesh(geometry, material);
 scene.add(skybox);
 
 var manager = new WebVRManager(renderer, effect, {hideButton: false});
+
+
+renderer.domElement.addEventListener('click', function(event) {
+  var vector = new THREE.Vector3();
+  var raycaster = new THREE.Raycaster();
+  vector.set(
+    (event.clientX / window.innerWidth) * 2 - 1,
+    - (event.clientY / window.innerHeight) * 2 + 1,
+    0.5  // z = 0.5 important!
+  );
+  vector.unproject(camera);
+  raycaster.set(camera.position, vector.sub(camera.position).normalize());
+  var intersects = raycaster.intersectObjects(mainObj.children);
+  console.log("click", vector.x, vector.y, vector.z, intersects);
+});
+
 
 function animate(timestamp) {
   controls.update();
