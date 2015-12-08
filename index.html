@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<title>Web VR Show and Tell</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<style>
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  color: #fff;
+  margin: 0px;
+  padding: 0;
+  overflow: hidden;
+}
+</style>
+</head>
+
+<body>
+
+</body>
+
+<script>
+WebVRConfig = {};
+</script>
+
+<script src="bower_components/threejs/build/three.js"></script>
+<script src="bower_components/threejs/examples/js/controls/VRControls.js"></script>
+<script src="bower_components/threejs/examples/js/effects/VREffect.js"></script>
+<script src="bower_components/webvr-polyfill/build/webvr-polyfill.js"></script>
+<script src="bower_components/webvr-boilerplate/build/webvr-manager.js"></script>
+
+
+<script>
+var renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setPixelRatio(window.devicePixelRatio);
+
+document.body.appendChild(renderer.domElement);
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+var controls = new THREE.VRControls(camera);
+var effect = new THREE.VREffect(renderer);
+effect.setSize(window.innerWidth, window.innerHeight);
+
+
+var boxWidth = 5;
+var texture = THREE.ImageUtils.loadTexture(
+  'images/box.png'
+);
+texture.wrapS = THREE.RepeatWrapping;
+texture.wrapT = THREE.RepeatWrapping;
+texture.repeat.set(boxWidth, boxWidth);
+
+var geometry = new THREE.BoxGeometry(boxWidth, boxWidth, boxWidth);
+var material = new THREE.MeshBasicMaterial({
+  map: texture,
+  color: 0x01BE00,
+  side: THREE.BackSide
+});
+
+var skybox = new THREE.Mesh(geometry, material);
+scene.add(skybox);
+
+var manager = new WebVRManager(renderer, effect, {hideButton: false});
+
+var geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+var material = new THREE.MeshNormalMaterial();
+var cube = new THREE.Mesh(geometry, material);
+cube.position.z = -1;
+scene.add(cube);
+
+function animate(timestamp) {
+  cube.rotation.y += 0.01;
+
+  controls.update();
+
+  manager.render(scene, camera, timestamp);
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+function onKey(event) {
+  if (event.keyCode == 90) { // z
+    controls.resetSensor();
+  }
+}
+window.addEventListener('keydown', onKey, true);
+
+</script>
+</html>

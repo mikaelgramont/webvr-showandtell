@@ -1,0 +1,24 @@
+{
+  "name": "webvr-showandtell",
+  "version": "",
+  "homepage": "",
+  "authors": [],
+  "description": "",
+  "main": "webvr-showandtell.js",
+  "keywords": [
+    "vr",
+    "webvr",
+    "webgl",
+    "threejs"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "threejs": "*",
+    "webvr-polyfill": "*",
+    "webvr-boilerplate": "*"
+  }
+}
