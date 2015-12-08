@@ -16,13 +16,16 @@ WebVRShowAndTell = function(userConfig, logger) {
 	}
 
 	for (prop in userConfig) {
-		if (userConfig.hasOwnProperty(prop) && this.defaultConfig_.hasOwnProperty(prop)) {
+		if (userConfig.hasOwnProperty(prop) &&
+			this.defaultConfig_.hasOwnProperty(prop)) {
 			this.config[prop] = userConfig[prop];
 		}
 	}
 
 	var nullLogger = {log: function(){}};
 	this.logger_ = logger || nullLogger;
+
+	this.loaderPromises_ = [];
 };
 
 WebVRShowAndTell.prototype.init = function() {
@@ -40,6 +43,11 @@ WebVRShowAndTell.prototype.init = function() {
 	this.setupGazeInput_();
 
 	this.animate_();
+
+	Promise.all(this.loaderPromises_).then(
+		// Once all files are loaded, proceed to start the S&T.
+		this.start.bind(this)
+	);
 };
 
 WebVRShowAndTell.prototype.setupLoading_ = function() {
@@ -72,7 +80,8 @@ WebVRShowAndTell.prototype.setupLights_ = function() {
 };
 
 WebVRShowAndTell.prototype.setupCamera_ = function() {
-	this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+	this.camera = new THREE.PerspectiveCamera(
+		75, window.innerWidth / window.innerHeight, 0.1, 10000);
 };
 
 WebVRShowAndTell.prototype.setupVRManager_ = function() {
@@ -85,7 +94,8 @@ WebVRShowAndTell.prototype.setupVRManager_ = function() {
 
 	this.effect = new THREE.VREffect(this.renderer);
 	this.effect.setSize(window.innerWidth, window.innerHeight);
-	this.VRManager = new WebVRManager(this.renderer, this.effect, {hideButton: false});
+	this.VRManager = new WebVRManager(this.renderer, this.effect,
+		{hideButton: false});
 };
 
 WebVRShowAndTell.prototype.setupMainObject_ = function() {
@@ -95,15 +105,36 @@ WebVRShowAndTell.prototype.setupMainObject_ = function() {
 	    this.logger_.log(Math.round(percentComplete, 2) + '% downloaded');
 	  }
 	}).bind(this);
-	var onError = function(xhr) {};	
 
+	// Loading texture
 	this.objTexture = new THREE.Texture();
-	this.imageLoader.load(this.config.modelTexture, (function(image) {
-	  this.objTexture.image = image;
-	  this.objTexture.needsUpdate = true;
-	}).bind(this));
+	this.loaderPromises_.push(new Promise((function(resolve, reject) {
+		var onError = function(xhr) {
+			this.logger_.log("Could not load model texture:", this.config.modelTexture);
+			reject();
+		};	
+		var onSuccess = function(image) {
+			this.objTexture.image = image;
+			this.objTexture.needsUpdate = true;
+			resolve();
+		};
+		this.imageLoader.load(this.config.modelTexture,
+			onSuccess.bind(this), onProgress.bind(this), onError.bind(this));
+	}).bind(this)));
 
-	this.objLoader.load(this.config.modelPath, this.onObjectLoaded_.bind(this), onProgress, onError);	
+	// Loading model
+	this.loaderPromises_.push(new Promise((function(resolve, reject) {
+		var onError = function(xhr) {
+			this.logger_.log("Could not load model file:", this.config.modelPath);
+			reject();
+		};
+		var onSuccess = function(object) {
+			this.onObjectLoaded_(object);
+			resolve();
+		};
+		this.objLoader.load(this.config.modelPath,
+			onSuccess.bind(this), onProgress.bind(this), onError.bind(this));	
+	}).bind(this)));
 };
 
 WebVRShowAndTell.prototype.onObjectLoaded_ = function(object) {
@@ -129,7 +160,8 @@ WebVRShowAndTell.prototype.setupSkybox_ = function() {
 		if (this.config.skyBoxRepeat) {
 			this.skyBoxTexture.wrapS = THREE.RepeatWrapping;
 			this.skyBoxTexture.wrapT = THREE.RepeatWrapping;
-			this.skyBoxTexture.repeat.set(this.config.skyBoxRepeat, this.config.skyBoxRepeat);
+			this.skyBoxTexture.repeat.set(
+				this.config.skyBoxRepeat,this.config.skyBoxRepeat);
 		}
 
 		var boxWidth = this.config.skyBoxWidth;
@@ -151,14 +183,16 @@ WebVRShowAndTell.prototype.setupSkybox_ = function() {
  */
 WebVRShowAndTell.prototype.setupGazeInput_ = function(timestamp) {
 	this.renderer.domElement.addEventListener('click', (function(event) {
-	  var vector = new THREE.Vector3();
-	  var raycaster = new THREE.Raycaster();
-	  // This checks for intersections with the center of the window.
-	  vector.set(0, 0, 0.5);  // z = 0.5 important!
-	  vector.unproject(this.camera);
-	  raycaster.set(this.camera.position, vector.sub(this.camera.position).normalize());
-	  var intersects = raycaster.intersectObject(this.mainObject, true);
-	  this.logger_.log(intersects.length > 0 ? "click intersect" : "click no intersect")
+		var vector = new THREE.Vector3();
+		var raycaster = new THREE.Raycaster();
+		// This checks for intersections with the center of the window.
+		vector.set(0, 0, 0.5);  // z = 0.5 important!
+		vector.unproject(this.camera);
+		raycaster.set(this.camera.position,
+			vector.sub(this.camera.position).normalize());
+		var intersects = raycaster.intersectObject(this.mainObject, true);
+		this.logger_.log(
+			intersects.length > 0 ? "click intersect" : "click no intersect");
 	}).bind(this));
 };
 
@@ -169,3 +203,7 @@ WebVRShowAndTell.prototype.animate_ = function(timestamp) {
 
   requestAnimationFrame(this.animate_.bind(this));	
 };
+
+WebVRShowAndTell.prototype.start = function() {
+	this.logger_.log('start');
+}
