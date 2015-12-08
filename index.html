@@ -26,10 +26,13 @@ body {
 </body>
 
 <script>
-WebVRConfig = {};
+WebVRConfig = {
+  FORCE_ENABLE_VR: true, // Default: false.  
+};
 </script>
 
 <script src="bower_components/threejs/build/three.js"></script>
+<script src="bower_components/threejs/examples/js/loaders/OBJLoader.js"></script>
 <script src="bower_components/threejs/examples/js/controls/VRControls.js"></script>
 <script src="bower_components/threejs/examples/js/effects/VREffect.js"></script>
 <script src="bower_components/webvr-polyfill/build/webvr-polyfill.js"></script>
@@ -47,6 +50,46 @@ var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHei
 var controls = new THREE.VRControls(camera);
 var effect = new THREE.VREffect(renderer);
 effect.setSize(window.innerWidth, window.innerHeight);
+
+
+var ambient = new THREE.AmbientLight(0x101030);
+scene.add(ambient);
+
+var directionalLight = new THREE.DirectionalLight(0xffeedd);
+directionalLight.position.set(0, 0, 1);
+scene.add(directionalLight);
+
+var manager = new THREE.LoadingManager();
+manager.onProgress = function(item, loaded, total) {
+  console.log(item, loaded, total);
+};
+var onProgress = function(xhr) {
+  if (xhr.lengthComputable) {
+    var percentComplete = xhr.loaded / xhr.total * 100;
+    console.log(Math.round(percentComplete, 2) + '% downloaded');
+  }
+};
+var onError = function(xhr) {};
+
+var imageLoader = new THREE.ImageLoader(manager);
+var objTexture = new THREE.Texture();
+imageLoader.load( 'models/UV_Grid_Sm.jpg', function (image) {
+  objTexture.image = image;
+  objTexture.needsUpdate = true;
+});
+
+var objLoader = new THREE.OBJLoader(manager);
+  objLoader.load('models/male02.obj', function(object) {
+    object.traverse(function(child) {
+      if (child instanceof THREE.Mesh) {
+        child.material.map = objTexture;
+      }
+    });
+    object.position.set(0, -.5, -1);
+    object.scale.set(.005, .005, .005);
+    scene.add(object);
+
+}, onProgress, onError);
 
 
 var boxWidth = 5;
@@ -69,15 +112,7 @@ scene.add(skybox);
 
 var manager = new WebVRManager(renderer, effect, {hideButton: false});
 
-var geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-var material = new THREE.MeshNormalMaterial();
-var cube = new THREE.Mesh(geometry, material);
-cube.position.z = -1;
-scene.add(cube);
-
 function animate(timestamp) {
-  cube.rotation.y += 0.01;
-
   controls.update();
 
   manager.render(scene, camera, timestamp);
