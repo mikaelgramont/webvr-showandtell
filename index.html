@@ -14,7 +14,7 @@ body {
   height: 100%;
   background-color: #000;
   color: #fff;
-  margin: 0px;
+  margin: 0;
   padding: 0;
   overflow: hidden;
 }
@@ -27,7 +27,7 @@ body {
 
 <script>
 WebVRConfig = {
-  FORCE_ENABLE_VR: true, // Default: false.  
+  // FORCE_ENABLE_VR: true, // Default: false.  
 };
 </script>
 
@@ -40,7 +40,10 @@ WebVRConfig = {
 
 <script src="scripts/webvr-showandtell.js"></script>
 <script>
-var showAndTell = new WebVRShowAndTell();
-showAndTell.setup();
+var showAndTell = new WebVRShowAndTell({
+    modelPath: 'models/male02.obj',
+    modelTexture: 'models/UV_Grid_Sm.jpg'  
+}, console);
+showAndTell.init();
 </script>
 </html>
