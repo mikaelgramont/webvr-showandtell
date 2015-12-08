@@ -118,15 +118,14 @@ var manager = new WebVRManager(renderer, effect, {hideButton: false});
 renderer.domElement.addEventListener('click', function(event) {
   var vector = new THREE.Vector3();
   var raycaster = new THREE.Raycaster();
-  vector.set(
-    (event.clientX / window.innerWidth) * 2 - 1,
-    - (event.clientY / window.innerHeight) * 2 + 1,
-    0.5  // z = 0.5 important!
-  );
+  // This checks for intersections with the center of the window.
+  vector.set(0, 0, 0.5);  // z = 0.5 important!
   vector.unproject(camera);
   raycaster.set(camera.position, vector.sub(camera.position).normalize());
-  var intersects = raycaster.intersectObjects(mainObj.children);
-  console.log("click", vector.x, vector.y, vector.z, intersects);
+  var intersects = raycaster.intersectObject(mainObj, true);
+  if (intersects.length > 0) {
+    console.log("click intersect");  
+  }
 });
 
 
