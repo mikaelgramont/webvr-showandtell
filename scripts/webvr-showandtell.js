@@ -98,19 +98,20 @@ WebVRShowAndTell.prototype.setupVRManager_ = function() {
 		{hideButton: false});
 };
 
-WebVRShowAndTell.prototype.setupMainObject_ = function() {
-	var onProgress = (function(xhr) {
-	  if (xhr.lengthComputable) {
-	    var percentComplete = xhr.loaded / xhr.total * 100;
-	    this.logger_.log(Math.round(percentComplete, 2) + '% downloaded');
-	  }
-	}).bind(this);
+WebVRShowAndTell.prototype.progressTracker_ = function(xhr) {
+	if (xhr.lengthComputable) {
+		var percentComplete = xhr.loaded / xhr.total * 100;
+		this.logger_.log(Math.round(percentComplete, 2) + '% downloaded');
+	}	
+};
 
+WebVRShowAndTell.prototype.setupMainObject_ = function() {
 	// Loading texture
 	this.objTexture = new THREE.Texture();
 	this.loaderPromises_.push(new Promise((function(resolve, reject) {
 		var onError = function(xhr) {
-			this.logger_.log("Could not load model texture:", this.config.modelTexture);
+			this.logger_.log("Could not load model texture:",
+				this.config.modelTexture);
 			reject();
 		};	
 		var onSuccess = function(image) {
@@ -118,63 +119,70 @@ WebVRShowAndTell.prototype.setupMainObject_ = function() {
 			this.objTexture.needsUpdate = true;
 			resolve();
 		};
-		this.imageLoader.load(this.config.modelTexture,
-			onSuccess.bind(this), onProgress.bind(this), onError.bind(this));
+		this.imageLoader.load(this.config.modelTexture,	onSuccess.bind(this),
+			this.progressTracker_.bind(this), onError.bind(this));
 	}).bind(this)));
 
 	// Loading model
 	this.loaderPromises_.push(new Promise((function(resolve, reject) {
 		var onError = function(xhr) {
-			this.logger_.log("Could not load model file:", this.config.modelPath);
+			this.logger_.log("Could not load model file:",
+				this.config.modelPath);
 			reject();
 		};
 		var onSuccess = function(object) {
-			this.onObjectLoaded_(object);
+		    this.mainObject = object;
+		    this.mainObject.traverse((function(child) {
+		      if (child instanceof THREE.Mesh) {
+		        child.material.map = this.objTexture;
+		      }
+		    }).bind(this));
+		    this.mainObject.position.set(0, -.5, -1);
+		    this.mainObject.scale.set(.005, .005, .005);
+		    this.scene.add(this.mainObject);
 			resolve();
 		};
-		this.objLoader.load(this.config.modelPath,
-			onSuccess.bind(this), onProgress.bind(this), onError.bind(this));	
+		this.objLoader.load(this.config.modelPath, onSuccess.bind(this),
+			this.progressTracker_.bind(this), onError.bind(this));	
 	}).bind(this)));
-};
-
-WebVRShowAndTell.prototype.onObjectLoaded_ = function(object) {
-    this.mainObject = object;
-    this.mainObject.traverse((function(child) {
-      if (child instanceof THREE.Mesh) {
-        child.material.map = this.objTexture;
-      }
-    }).bind(this));
-    this.mainObject.position.set(0, -.5, -1);
-    this.mainObject.scale.set(.005, .005, .005);
-    this.scene.add(this.mainObject);
 };
 
 WebVRShowAndTell.prototype.setupSkybox_ = function() {
 	if (this.config.skyBoxTexture) {		
 		this.skyBoxTexture = new THREE.Texture();
-		this.imageLoader.load(this.config.skyBoxTexture, (function(image) {
-		  this.skyBoxTexture.image = image;
-		  this.skyBoxTexture.needsUpdate = true;			
-		}).bind(this));
+		this.loaderPromises_.push(new Promise((function(resolve, reject) {
+			var onError = function(xhr) {
+				this.logger_.log("Could not load skybox texture:",
+					this.config.skyBoxTexture);
+				reject();
+			};	
+			var onSuccess = function(image) {
+				this.skyBoxTexture.image = image;
+				this.skyBoxTexture.needsUpdate = true;
+				if (this.config.skyBoxRepeat) {
+					this.skyBoxTexture.wrapS = THREE.RepeatWrapping;
+					this.skyBoxTexture.wrapT = THREE.RepeatWrapping;
+					this.skyBoxTexture.repeat.set(
+						this.config.skyBoxRepeat,this.config.skyBoxRepeat);
+				}
 
-		if (this.config.skyBoxRepeat) {
-			this.skyBoxTexture.wrapS = THREE.RepeatWrapping;
-			this.skyBoxTexture.wrapT = THREE.RepeatWrapping;
-			this.skyBoxTexture.repeat.set(
-				this.config.skyBoxRepeat,this.config.skyBoxRepeat);
-		}
+				var boxWidth = this.config.skyBoxWidth;
+				var geometry = new THREE.BoxGeometry(boxWidth, boxWidth, boxWidth);
 
-		var boxWidth = this.config.skyBoxWidth;
-		var geometry = new THREE.BoxGeometry(boxWidth, boxWidth, boxWidth);
+				var material = new THREE.MeshBasicMaterial({
+				  map: this.skyBoxTexture,
+				  color: 0x01BE00,
+				  side: THREE.BackSide
+				});
 
-		var material = new THREE.MeshBasicMaterial({
-		  map: this.skyBoxTexture,
-		  color: 0x01BE00,
-		  side: THREE.BackSide
-		});
+				var skybox = new THREE.Mesh(geometry, material);
+				this.scene.add(skybox);
 
-		var skybox = new THREE.Mesh(geometry, material);
-		this.scene.add(skybox);
+				resolve();
+			};
+			this.imageLoader.load(this.config.skyBoxTexture, onSuccess.bind(this),
+				this.progressTracker_.bind(this), onError.bind(this));
+		}).bind(this)));
 	}
 };
 
