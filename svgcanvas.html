@@ -2,58 +2,78 @@
 <html>
 <head>
 	<title>SVG to Canvas</title>
+	<style id="steps-style">
+		div {color: orange}
+	</style>
 	<style>
-		body, .svg-container, .svg-content {
-			font-family: monospace;
-			margin: 10px;
-			background: #ddd;
-		}
 		img {
 			border: 1px solid red;
 		}
 		canvas {
 			outline: 1px solid black;
 		}
-		.svg-container {
+		#steps {
 			display: none;
 		}
 	</style>
 </head>
 <body>
-	<img width="200" height="200" alt="" />
-	<canvas width="200" height="200"></canvas>
-	<div class="svg-container">
-		<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
-			<foreignObject class="svg-content" width="100%" height="100%">
-				<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:40px; font-family: monospace">
-					<em>I</em> like <span style="color:white; text-shadow:0 0 2px blue;"> cheese</span>
-	           </div>
-           </foreignObject>
-		</svg>
-	</div>
+	<ul id="steps">
+		<li data-width="200" data-height="200">
+			<h2>This is step 1</h2>
+			<p>Some text to display below the title.</p>
+		</li>
+		<li data-width="200" data-height="200">
+			<h2>This is step 2</h2>
+			<p>Some more text to display.</p>
+		</li>
+	</ul>
+	<canvas width="400" height="200"></canvas>
+
 	<h1>Notes</h1>
 	<pre>
 It seems font styles need to be applied inline on the svg element in order to be picked up.
 Maybe grab the svg from the DOM, make that a static string.
 Then for each step, grab the content of the step from the dom, place it inside a copy of that static string, and generate a Blob based on that.
 Then generate a hidden image for the step right before rendering it.
+Since styles seem to be completely sealed from the current document, see about applying styles on the fly, or maybe load a stylesheet inside the svg.
 	</pre>
 </body>
 <script>
-	var DOMURL = window.URL || window.webkitURL || window;
-
 	var canvas = document.getElementsByTagName('canvas')[0];
 	var ctx = canvas.getContext('2d');
-	var data = document.getElementsByClassName('svg-container')[0].innerHTML;
-	var img = document.getElementsByTagName('img')[0];
-	var svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
-	var url = DOMURL.createObjectURL(svg);
+	var stepStyles = document.getElementById('steps-style').innerHTML;
 
-	img.onload = function () {
-	  ctx.drawImage(img, 0, 0);
-	  DOMURL.revokeObjectURL(url);
-	}
+	var renderToCanvas = function(containerEl, style, onReady) {
+		var SVG_TEMPLATE = '<svg xmlns="http://www.w3.org/2000/svg" width="$width" height="$height"><foreignObject class="svg-content" width="100%" height="100%"><style>$style</style><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%; height:100%">$content</div></foreignObject></svg>';
+		var DOMURL = window.URL || window.webkitURL || window;
 
-	img.src = url;	
+		var content = containerEl.innerHTML;
+		var width = containerEl.getAttribute('data-width');
+		var height = containerEl.getAttribute('data-height');
+		if (typeof style == "undefined") {
+			style = "";
+		}
+		var data = (SVG_TEMPLATE.
+			replace('$width', width).
+			replace('$height', height).
+			replace('$style', style).
+			replace('$content', content));
+		var svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
+		var url = DOMURL.createObjectURL(svg);
+		var img = document.createElement('img');
+		img.onload = function() {
+			onReady(img);
+			DOMURL.revokeObjectURL(url);
+		}
+		img.src = url;	
+	};
+
+	renderToCanvas(document.getElementsByTagName('li')[0], stepStyles, function(img) {
+		ctx.drawImage(img, 0, 0);
+	});
+	renderToCanvas(document.getElementsByTagName('li')[1], stepStyles, function(img) {
+		ctx.drawImage(img, 200, 0);
+	});
 </script>
 </html>
