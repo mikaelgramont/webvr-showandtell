@@ -11,7 +11,7 @@ WebVRShowAndTell = function(userConfig, logger) {
 		// How many times the skybox texture should repeat along one dinmension.
 		skyBoxRepeat: 5,
 		// A list of nodes, each describing a step of the show and tell.
-		steps: null,
+		stepEls: null,
 		// The element containing the styling for all .
 		stepsStyleEl: null
 	};
@@ -40,9 +40,6 @@ WebVRShowAndTell = function(userConfig, logger) {
 	// An array storing the rendered images for annotations.
 	this.annotationImages_ = [];
 
-	// Map containing all steps for this show and tell.
-	this.steps_ = {};
-
 	this.imageRenderer_ = new DomToImage(
 		this.config.stepsStyleEl);
 };
@@ -59,11 +56,10 @@ WebVRShowAndTell.prototype.init = function() {
 	this.setupMainObject_();
 	this.setupSkybox_();
 	
+	this.setupFlow_();
 	this.setupGazeInput_();
 
 	this.animate_();
-
-	this.setupSteps_();
 
 	Promise.all(this.loaderPromises_).then(
 		// Once all files are loaded, proceed to start the S&T.
@@ -74,7 +70,7 @@ WebVRShowAndTell.prototype.init = function() {
 WebVRShowAndTell.prototype.setupLoading_ = function() {
 	this.loadingManager = new THREE.LoadingManager();
 	this.loadingManager.onProgress = (function(item, loaded, total) {
-	  this.logger_.log(item, loaded, total);
+	  this.logger_.log("Loading progress:", item, loaded, total);
 	}).bind(this);
 
 	this.imageLoader = new THREE.ImageLoader(this.loadingManager);
@@ -89,6 +85,8 @@ WebVRShowAndTell.prototype.setupRenderer_ = function() {
 
 WebVRShowAndTell.prototype.setupScene_ = function() {
 	this.scene = new THREE.Scene();
+
+	// TODO - temporary: add a cube that steps can send their img to.
 };
 
 WebVRShowAndTell.prototype.setupLights_ = function() {
@@ -207,6 +205,10 @@ WebVRShowAndTell.prototype.setupSkybox_ = function() {
 	}
 };
 
+WebVRShowAndTell.prototype.setupFlow_ = function() {
+	this.flow_ = new Flow(this.config.stepEls, this.scene, this.logger_);
+};
+
 /**
  * This is WIP, but the goal is to enable gaze-based input for Cardboard.
  */
@@ -225,14 +227,6 @@ WebVRShowAndTell.prototype.setupGazeInput_ = function(timestamp) {
 	}).bind(this));
 };
 
-WebVRShowAndTell.prototype.setupSteps_ = function() {
-	for(var i = 0, l = this.config.steps.length; i < l; i++) {
-		var el = this.config.steps[i];
-		var name = el.getAttribute('data-name');
-		this.steps_[name] = new Step(el, this.imageRenderer_);
-	};
-};
-
 WebVRShowAndTell.prototype.animate_ = function(timestamp) {
   this.controls.update();
 
@@ -242,7 +236,7 @@ WebVRShowAndTell.prototype.animate_ = function(timestamp) {
 };
 
 WebVRShowAndTell.prototype.start = function() {
-	this.logger_.log('start');
+	this.logger_.log('Starting show-and-tell');
 
-	// TODO: go to the first step, and render it.
+	this.flow_.renderCurrent();
 }

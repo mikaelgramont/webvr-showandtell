@@ -52,13 +52,14 @@ WebVRConfig = {
 <script src="bower_components/webvr-boilerplate/build/webvr-manager.js"></script>
 
 <script src="scripts/domtoimage.js"></script>
+<script src="scripts/flow.js"></script>
 <script src="scripts/step.js"></script>
 <script src="scripts/webvr-showandtell.js"></script>
 <script>
 var showAndTell = new WebVRShowAndTell({
     modelPath: 'models/male02.obj',
     modelTexture: 'models/UV_Grid_Sm.jpg',
-    steps: document.getElementsByTagName('li'),
+    stepEls: document.getElementsByTagName('li'),
     stepsStyleEl: document.getElementById('webvr-showandtell-steps-style')    
 }, console);
 showAndTell.init();
