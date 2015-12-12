@@ -42,6 +42,9 @@ WebVRShowAndTell = function(userConfig, logger) {
 
 	// Map containing all steps for this show and tell.
 	this.steps_ = {};
+
+	this.imageRenderer_ = new DomToImage(
+		this.config.stepsStyleEl);
 };
 
 WebVRShowAndTell.prototype.init = function() {
@@ -64,7 +67,7 @@ WebVRShowAndTell.prototype.init = function() {
 
 	Promise.all(this.loaderPromises_).then(
 		// Once all files are loaded, proceed to start the S&T.
-		this.start.bind(this);
+		this.start.bind(this)
 	);
 };
 
@@ -223,9 +226,11 @@ WebVRShowAndTell.prototype.setupGazeInput_ = function(timestamp) {
 };
 
 WebVRShowAndTell.prototype.setupSteps_ = function() {
-	// TODO: create some kind of step factory.
-	// We'll go over all the children of this.config.steps,
-	// and populate this.steps_.
+	for(var i = 0, l = this.config.steps.length; i < l; i++) {
+		var el = this.config.steps[i];
+		var name = el.getAttribute('data-name');
+		this.steps_[name] = new Step(el, this.imageRenderer_);
+	};
 };
 
 WebVRShowAndTell.prototype.animate_ = function(timestamp) {
