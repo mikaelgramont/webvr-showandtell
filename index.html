@@ -19,10 +19,23 @@ body {
   overflow: hidden;
 }
 </style>
+<link href="styles/webvr-showandtell.css" media="screen" rel="stylesheet" type="text/css">
 </head>
 
 <body>
-
+  <span id="webvr-showandtell-steps-style">
+    div {color: orange}
+  </span>
+  <ul class="webvr-showandtell-steps">
+    <li id="step1" data-name="title" data-width="150px" data-height="100px">
+      <h2>This is step 1</h2>
+      <p>Some text to display below the title.</p>
+    </li>
+    <li id="step2" data-name="introduction" data-width="150px" data-height="100px">
+      <h2>This is step 2</h2>
+      <p>Some more text to display.</p>
+    </li>
+  </ul>
 </body>
 
 <script>
@@ -38,11 +51,16 @@ WebVRConfig = {
 <script src="bower_components/webvr-polyfill/build/webvr-polyfill.js"></script>
 <script src="bower_components/webvr-boilerplate/build/webvr-manager.js"></script>
 
+<script src="scripts/domtoimage.js"></script>
 <script src="scripts/webvr-showandtell.js"></script>
 <script>
 var showAndTell = new WebVRShowAndTell({
     modelPath: 'models/male02.obj',
-    modelTexture: 'models/UV_Grid_Sm.jpg'  
+    modelTexture: 'models/UV_Grid_Sm.jpg',
+    steps = document.getElementsByTagName('li'),
+    stepsStyleEl: document.getElementById('webvr-showandtell-steps-style')
+    imageRenderer = new DomToImage(
+      )
 }, console);
 showAndTell.init();
 </script>

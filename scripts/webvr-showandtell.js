@@ -1,10 +1,19 @@
 WebVRShowAndTell = function(userConfig, logger) {
 	this.defaultConfig_ = {
+		// The relative or absolute path to the main model.
 		modelPath: null,
+		// The relative or absolute path to the texture for the main model.
 		modelTexture: null,
+		// The relative or absolute path to the texture for the skybox.
 		skyBoxTexture: 'images/box.png',
+		// The width of the skybox cube.
 		skyBoxWidth: 5,
+		// How many times the skybox texture should repeat along one dinmension.
 		skyBoxRepeat: 5,
+		// A list of nodes, each describing a step of the show and tell.
+		steps: null,
+		// The element containing the styling for all .
+		stepsStyleEl: null
 	};
 
 	this.config = {};
@@ -25,7 +34,14 @@ WebVRShowAndTell = function(userConfig, logger) {
 	var nullLogger = {log: function(){}};
 	this.logger_ = logger || nullLogger;
 
+	// An array of promises for all the things we need to load.
 	this.loaderPromises_ = [];
+
+	// An array storing the rendered images for annotations.
+	this.annotationImages_ = [];
+
+	// Map containing all steps for this show and tell.
+	this.steps_ = {};
 };
 
 WebVRShowAndTell.prototype.init = function() {
@@ -44,9 +60,11 @@ WebVRShowAndTell.prototype.init = function() {
 
 	this.animate_();
 
+	this.setupSteps_();
+
 	Promise.all(this.loaderPromises_).then(
 		// Once all files are loaded, proceed to start the S&T.
-		this.start.bind(this)
+		this.start.bind(this);
 	);
 };
 
@@ -204,6 +222,12 @@ WebVRShowAndTell.prototype.setupGazeInput_ = function(timestamp) {
 	}).bind(this));
 };
 
+WebVRShowAndTell.prototype.setupSteps_ = function() {
+	// TODO: create some kind of step factory.
+	// We'll go over all the children of this.config.steps,
+	// and populate this.steps_.
+};
+
 WebVRShowAndTell.prototype.animate_ = function(timestamp) {
   this.controls.update();
 
@@ -214,4 +238,6 @@ WebVRShowAndTell.prototype.animate_ = function(timestamp) {
 
 WebVRShowAndTell.prototype.start = function() {
 	this.logger_.log('start');
+
+	// TODO: go to the first step, and render it.
 }
