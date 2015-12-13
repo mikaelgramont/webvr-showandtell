@@ -10,3 +10,6 @@
 	- for each frame where the collision with an object is true, increment a counter, and represent the counter visually. Place the object in the list of currently "colliding".
 	- for each object in the list, if the collision is not happening anymore, decrement the counter and update representation
 	- when the counter reaches a limit, tell the manage. A second step would be to fire a DOM event on the equivalent object in the dom (possibly build a parallel between the real DOM - all hidden - and things rendered in canvas: have events in the canvas correspond to events in the DOM. That would provide a fallback for a11y users).
+
+
+- should use the image loader like all other textures

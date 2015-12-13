@@ -34,13 +34,11 @@ WebVRShowAndTell = function(userConfig, logger) {
 	var nullLogger = {log: function(){}};
 	this.logger_ = logger || nullLogger;
 
-	// An array of promises for all the things we need to load.
-	this.loaderPromises_ = [];
+	// An array of promises that need to be resolved before we
+	// can start the flow.
+	this.flowPromises_ = [];
 
-	// An array storing the rendered images for annotations.
-	this.annotationImages_ = [];
-
-	this.imageRenderer_ = new DomToImage(
+	this.domToImage_ = new DomToImage(
 		this.config.stepsStyleEl);
 };
 
@@ -61,7 +59,7 @@ WebVRShowAndTell.prototype.init = function() {
 
 	this.animate_();
 
-	Promise.all(this.loaderPromises_).then(
+	Promise.all(this.flowPromises_).then(
 		// Once all files are loaded, proceed to start the S&T.
 		this.start.bind(this)
 	);
@@ -85,8 +83,6 @@ WebVRShowAndTell.prototype.setupRenderer_ = function() {
 
 WebVRShowAndTell.prototype.setupScene_ = function() {
 	this.scene = new THREE.Scene();
-
-	// TODO - temporary: add a cube that steps can send their img to.
 };
 
 WebVRShowAndTell.prototype.setupLights_ = function() {
@@ -127,7 +123,7 @@ WebVRShowAndTell.prototype.progressTracker_ = function(xhr) {
 WebVRShowAndTell.prototype.setupMainObject_ = function() {
 	// Loading texture
 	this.objTexture = new THREE.Texture();
-	this.loaderPromises_.push(new Promise((function(resolve, reject) {
+	this.flowPromises_.push(new Promise((function(resolve, reject) {
 		var onError = function(xhr) {
 			this.logger_.log("Could not load model texture:",
 				this.config.modelTexture);
@@ -143,7 +139,7 @@ WebVRShowAndTell.prototype.setupMainObject_ = function() {
 	}).bind(this)));
 
 	// Loading model
-	this.loaderPromises_.push(new Promise((function(resolve, reject) {
+	this.flowPromises_.push(new Promise((function(resolve, reject) {
 		var onError = function(xhr) {
 			this.logger_.log("Could not load model file:",
 				this.config.modelPath);
@@ -169,7 +165,7 @@ WebVRShowAndTell.prototype.setupMainObject_ = function() {
 WebVRShowAndTell.prototype.setupSkybox_ = function() {
 	if (this.config.skyBoxTexture) {		
 		this.skyBoxTexture = new THREE.Texture();
-		this.loaderPromises_.push(new Promise((function(resolve, reject) {
+		this.flowPromises_.push(new Promise((function(resolve, reject) {
 			var onError = function(xhr) {
 				this.logger_.log("Could not load skybox texture:",
 					this.config.skyBoxTexture);
@@ -206,7 +202,8 @@ WebVRShowAndTell.prototype.setupSkybox_ = function() {
 };
 
 WebVRShowAndTell.prototype.setupFlow_ = function() {
-	this.flow_ = new Flow(this.config.stepEls, this.scene, this.logger_);
+	this.flow_ = new Flow(this.config.stepEls, this.scene, this.renderer,
+		this.domToImage_, this.logger_);
 };
 
 /**
