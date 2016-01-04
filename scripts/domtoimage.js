@@ -7,8 +7,7 @@ var DomToImage = function(styleEl) {
 	this.DOMURL_ = window.URL || window.webkitURL || window;
 }
 
-DomToImage.prototype.renderImage = function(containerEl, res, img, canvas, onReady) {
-	var ctx = canvas.getContext('2d');
+DomToImage.prototype.renderImage = function(containerEl, res, img, onReady) {
 	var res = containerEl.getAttribute('data-res');
 	var width = containerEl.getAttribute('data-width');
 	var height = containerEl.getAttribute('data-height');
@@ -24,10 +23,7 @@ DomToImage.prototype.renderImage = function(containerEl, res, img, canvas, onRea
 		encodeURIComponent(data);
 	img.width = res;
 	img.height = res;
-	canvas.width = width;
-	canvas.height = height;
 	img.onload = (function() {
-		ctx.drawImage(img, 0, 0, width, height);
 		onReady(img);
 		img.onload = null;
 	}).bind(this);

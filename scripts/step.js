@@ -12,8 +12,8 @@ var Step = function(el, name, scene, threeRenderer, domToImage, logger) {
 	this.next_ = null;
 };
 
-Step.prototype.render = function(img, canvas) {
-	this.domToImage_.renderImage(this.el_, 256, img, canvas,
+Step.prototype.render = function(img) {
+	this.domToImage_.renderImage(this.el_, 256, img,
 		this.onImgReady_.bind(this));
 };
 

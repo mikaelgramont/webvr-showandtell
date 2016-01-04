@@ -6,17 +6,12 @@ var Flow = function(stepEls, scene, threeRenderer, domToImage, logger) {
 	this.steps_ = this.setupSteps_(stepEls);
 
 	var img = document.createElement('img');
-	var canvas = document.createElement('canvas');
 	// img.width = "256";
 	// img.height = "256";
 	this.imgs = {
 		annotation: img
 	};
-	this.canvases = {
-		annotation: canvas
-	};
 	document.body.appendChild(img);
-	document.body.appendChild(canvas);
 }
 
 Flow.prototype.setupSteps_ = function(stepEls) {
@@ -38,8 +33,7 @@ Flow.prototype.setupSteps_ = function(stepEls) {
 
 Flow.prototype.renderCurrent = function() {
 	console.log("Rendering step", this.currentStepName_);
-	this.getCurrentStep().render(this.imgs.annotation,
-		this.canvases.annotation);
+	this.getCurrentStep().render(this.imgs.annotation);
 };
 
 Flow.prototype.getCurrentStep = function() {
