@@ -30,11 +30,17 @@ body {
     }
   </span>
   <ul class="webvr-showandtell-steps">
-    <li id="step1" data-name="title" data-res="512"data-width="150" data-height="100">
+    <li id="step1" data-name="title"
+      data-texture-res="256" data-annotation-width=".5" data-annotation-height=".5"
+      data-annotation-x=".35" data-annotation-y=".5"  data-annotation-z="-1"
+      data-next-step="introduction">
       <h2>This is step 1</h2>
       <p>Some text to display below the title.</p>
     </li>
-    <li id="step2" data-name="introduction" data-width="150px" data-height="100px">
+    <li id="step2" data-name="introduction"
+    data-texture-res="512" data-annotation-width=".5" data-annotation-height=".5"
+    data-annotation-x=".1" data-annotation-y=".5"  data-annotation-z="-.5"
+    data-previous-step="title">
       <h2>This is step 2</h2>
       <p>Some more text to display.</p>
     </li>
@@ -53,7 +59,6 @@ WebVRConfig = {
 <script src="bower_components/threejs/examples/js/effects/VREffect.js"></script>
 <script src="bower_components/webvr-polyfill/build/webvr-polyfill.js"></script>
 <script src="bower_components/webvr-boilerplate/build/webvr-manager.js"></script>
-<script src="bower_components/html2canvas/build/html2canvas.min.js"></script>
 
 <script src="scripts/domtoimage.js"></script>
 <script src="scripts/flow.js"></script>

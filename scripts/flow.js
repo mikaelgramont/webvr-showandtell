@@ -24,7 +24,7 @@ Flow.prototype.setupSteps_ = function(stepEls) {
 			// Start with the first step in the list.
 			this.currentStepName_ = name;
 		}
-		steps[name] = new Step(el, name, this.scene_, this.threeRenderer_,
+		steps[name] = new Step(i, el, name, this.scene_, this.threeRenderer_,
 			this.domToImage_, this.logger_);
 	};
 
@@ -33,7 +33,12 @@ Flow.prototype.setupSteps_ = function(stepEls) {
 
 Flow.prototype.renderCurrent = function() {
 	console.log("Rendering step", this.currentStepName_);
+	// TODO: tell all steps to clear.
 	this.getCurrentStep().render(this.imgs.annotation);
+};
+
+Flow.prototype.clearCurrentStep = function() {
+	this.getCurrentStep().clear();	
 };
 
 Flow.prototype.getCurrentStep = function() {
@@ -41,19 +46,23 @@ Flow.prototype.getCurrentStep = function() {
 };
 
 Flow.prototype.goToPrevious = function() {
-	var previous = this.getCurrentStep().getPrevious();
+	var previous = this.steps_[
+		this.getCurrentStep().getPreviousStepName()]
 	if (!previous) {
 		return;
 	}
+	this.clearCurrentStep();
 	this.currentStepName_ = previous.getName();
 	this.renderCurrent();
 };
 
 Flow.prototype.goToNext = function() {
-	var next = this.getCurrentStep().getNext();
+	var next = this.steps_[
+		this.getCurrentStep().getNextStepName()]
 	if (!next) {
 		return;
 	}
+	this.clearCurrentStep();
 	this.currentStepName_ = next.getName();
 	this.renderCurrent();
 };

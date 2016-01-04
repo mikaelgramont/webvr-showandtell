@@ -204,6 +204,7 @@ WebVRShowAndTell.prototype.setupSkybox_ = function() {
 WebVRShowAndTell.prototype.setupFlow_ = function() {
 	this.flow_ = new Flow(this.config.stepEls, this.scene, this.renderer,
 		this.domToImage_, this.logger_);
+	window.flow = this.flow_;
 };
 
 /**

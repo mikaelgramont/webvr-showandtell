@@ -1,4 +1,5 @@
-var Step = function(el, name, scene, threeRenderer, domToImage, logger) {
+var Step = function(index, el, name, scene, threeRenderer, domToImage, logger) {
+	this.index_ = index;
 	this.el_ = el;
 	this.name_ = name;
 	this.scene_ = scene;
@@ -13,15 +14,21 @@ var Step = function(el, name, scene, threeRenderer, domToImage, logger) {
 };
 
 Step.prototype.render = function(img) {
-	this.domToImage_.renderImage(this.el_, 256, img,
+	this.img_ = img;
+	this.domToImage_.renderImage(
+		this.el_.innerHTML,
+		this.el_.getAttribute('data-texture-res'),
+		img,
 		this.onImgReady_.bind(this));
 };
 
-Step.prototype.onImgReady_ = function(img) {
-	this.logger_.log("Ready to update annotation image", img.src);
-	this.img_ = img;
-	window.img = this.img_
-	document.body.appendChild(img);
+Step.prototype.clear = function() {
+	this.scene_.remove(
+		this.scene_.getObjectByName(this.getAnnotationName()));
+};
+
+Step.prototype.onImgReady_ = function() {
+	this.logger_.log("Ready to update annotation image", this.img_.src);
 
 	var texture = new THREE.Texture();
 	texture.needsUpdate = true;
@@ -30,23 +37,41 @@ Step.prototype.onImgReady_ = function(img) {
 	  map: texture,
 	});
 
-	var geometry = new THREE.BoxGeometry(.5, .3, .01);
+	var geometry = new THREE.BoxGeometry(
+		this.el_.getAttribute('data-annotation-width'),
+		this.el_.getAttribute('data-annotation-height'),
+		// Constant thickness.
+		.01
+	);
 
 	var annotation = new THREE.Mesh(geometry, material);
-	annotation.name = 'annotation';
-	annotation.position.set(.35, .5, -1);
+	annotation.name = this.getAnnotationName();
+	annotation.position.set(
+		this.el_.getAttribute('data-annotation-x'),
+		this.el_.getAttribute('data-annotation-y'),
+		this.el_.getAttribute('data-annotation-z')
+	);
+
+	var current = this.scene_.getObjectByName(this.getAnnotationName());
+	if (current) {
+		this.scene_.remove(current);
+	}
 
 	this.scene_.add(annotation);
 };
+
+Step.prototype.getAnnotationName = function() {
+	return 'annotation' + this.index_;
+}
 
 Step.prototype.getName = function() {
 	return this.name_;
 };
 
-Step.prototype.getPrevious = function() {
-
+Step.prototype.getPreviousStepName = function() {
+	return this.el_.getAttribute('data-previous-step');
 };
 
-Step.prototype.getNext = function() {
-
+Step.prototype.getNextStepName = function() {
+	return this.el_.getAttribute('data-next-step');
 };
