@@ -223,9 +223,20 @@ WebVRShowAndTell.prototype.setupGazeInput_ = function(timestamp) {
 		vector.unproject(this.camera);
 		raycaster.set(this.camera.position,
 			vector.sub(this.camera.position).normalize());
-		var intersects = raycaster.intersectObject(this.mainObject, true);
-		this.logger_.log(
-			intersects.length > 0 ? "click intersect" : "click no intersect");
+		var interactiveObjects = this.flow_.getInteractiveObjects();
+
+		for (var i = 0, l = interactiveObjects.length; i < l; i++) {
+			var interactiveObject = interactiveObjects[i];
+			var mesh = interactiveObject.getMesh();
+			if (!mesh) {
+				continue;
+			}
+
+			var intersects = raycaster.intersectObject(mesh, true);
+			if (intersects.length > 0) {
+				interactiveObject.onGazeActivation();
+			}
+		}
 	}).bind(this));
 };
 

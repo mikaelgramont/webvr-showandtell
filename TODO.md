@@ -1,6 +1,9 @@
 # TODO
-- add next/prev buttons.
+- add next/prev buttons:
+	- build the render function
+	- see what can be abstracted into a parent object between button and step
 - display them at the bottom of the current annotation when necessary
+	- maybe a simple parenting plus local offset is enough
 
 
 - Flesh out the gaze input system: 

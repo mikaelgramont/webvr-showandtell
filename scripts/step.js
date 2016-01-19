@@ -14,6 +14,8 @@ var Step = function(index, el, name, scene, threeRenderer, domToImage, logger) {
 };
 
 Step.prototype.render = function(img) {
+	this.logger_.log("Rendering step", this.name_);
+
 	// This attribute controls the resolution of the texture.
 	// Until this can be calculated, it will need to be adjusted
 	// manually, depending on how far and how big the annotation is.
@@ -58,20 +60,21 @@ Step.prototype.onImgReady_ = function() {
 		.01
 	);
 
-	var annotation = new THREE.Mesh(geometry, material);
-	annotation.name = this.getAnnotationName();
-	annotation.position.set(
+	this.mesh_ = new THREE.Mesh(geometry, material);
+	this.mesh_.name = this.getAnnotationName();
+	this.mesh_.position.set(
 		this.el_.getAttribute('data-annotation-x'),
 		this.el_.getAttribute('data-annotation-y'),
 		this.el_.getAttribute('data-annotation-z')
 	);
 
+	// Remove the previous annotation - if any.
 	var current = this.scene_.getObjectByName(this.getAnnotationName());
 	if (current) {
 		this.scene_.remove(current);
 	}
 
-	this.scene_.add(annotation);
+	this.scene_.add(this.mesh_);
 };
 
 Step.prototype.getAnnotationName = function() {

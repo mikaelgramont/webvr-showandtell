@@ -7,13 +7,14 @@ var Flow = function(stepEls, buttonEls, scene, threeRenderer, domToImage,
 	this.steps_ = this.setupSteps_(stepEls);
 	this.buttons_ = this.setupButtons_(buttonEls);
 
-	var img = document.createElement('img');
-	// img.width = "256";
-	// img.height = "256";
 	this.imgs = {
-		annotation: img
+		annotation: document.createElement('img'),
+		backButton: document.createElement('img'),
+		nextButton: document.createElement('img')
 	};
-	document.body.appendChild(img);
+	for (var img in this.imgs) {
+		document.body.appendChild(this.imgs[img]);
+	}
 }
 
 Flow.prototype.setupSteps_ = function(stepEls) {
@@ -34,10 +35,6 @@ Flow.prototype.setupSteps_ = function(stepEls) {
 };
 
 Flow.prototype.setupButtons_ = function(buttonEls) {
-	// TODO: create two buttons: back and next.
-	// They should be tied to goToPrevious and goToNext, and have
-	// two methods to hide and reveal them.
-	
 	var back = new Button(buttonEls[0], 'back-button',
 		this.goToPrevious.bind(this), this.scene_, this.threeRenderer_,
 		this.domToImage_, this.logger_);
@@ -48,13 +45,28 @@ Flow.prototype.setupButtons_ = function(buttonEls) {
 
 	return {
 		'back': back,
-		'next ': next
+		'next': next
 	}
 };
 
+Flow.prototype.getInteractiveObjects = function() {
+	var objs = [];
+	if (this.getPreviousStep()) {
+		objs.push(this.buttons_.back);
+	}
+	if (this.getNextStep()) {
+		objs.push(this.buttons_.next);
+	}
+
+	// TODO: maybe add annotations if they become interactive,
+	// as well as the main object on the page, or its subparts.
+
+	return objs;
+};
+
 Flow.prototype.renderCurrent = function() {
-	this.logger_.log("Rendering step", this.currentStepName_);
 	this.getCurrentStep().render(this.imgs.annotation);
+	this.renderButtons();
 };
 
 Flow.prototype.clearCurrentStep = function() {
@@ -65,28 +77,54 @@ Flow.prototype.getCurrentStep = function() {
 	return this.steps_[this.currentStepName_];
 };
 
+Flow.prototype.getPreviousStep = function() {
+	return this.steps_[
+		this.getCurrentStep().getPreviousStepName()];
+};
+
+Flow.prototype.getNextStep = function() {
+	return this.steps_[
+		this.getCurrentStep().getNextStepName()];
+};
+
 Flow.prototype.goToPrevious = function() {
-	var previous = this.steps_[
-		this.getCurrentStep().getPreviousStepName()]
+	this.logger_.log('goToPrevious');
+
+	var previous = this.getPreviousStep();
 	if (!previous) {
+		this.logger_.log('No previous step');
 		return;
 	}
+
 	this.clearCurrentStep();
 	this.currentStepName_ = previous.getName();
 	this.renderCurrent();
-
-	// TODO: hide back button if no prev step, else reveal it.
 };
 
 Flow.prototype.goToNext = function() {
-	var next = this.steps_[
-		this.getCurrentStep().getNextStepName()]
+	this.logger_.log('goToNext');
+
+	var next = this.getNextStep();
 	if (!next) {
+		this.logger_.log('No next step');
 		return;
 	}
 	this.clearCurrentStep();
 	this.currentStepName_ = next.getName();
 	this.renderCurrent();
+};
 
-	// TODO: hide next button if no next step, else reveal it.
+Flow.prototype.renderButtons = function() {
+	if (this.getPreviousStep()) {
+		this.buttons_.back.show();
+		this.buttons_.back.render(this.imgs.backButton);
+	} else {
+		this.buttons_.back.hide();
+	}
+	if (this.getNextStep()) {
+		this.buttons_.next.show();
+		this.buttons_.next.render(this.imgs.nextButton);
+	} else {
+		this.buttons_.next.hide();
+	}
 };
