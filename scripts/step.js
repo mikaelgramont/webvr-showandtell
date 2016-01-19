@@ -14,10 +14,15 @@ var Step = function(index, el, name, scene, threeRenderer, domToImage, logger) {
 };
 
 Step.prototype.render = function(img) {
+	// This attribute controls the resolution of the texture.
+	// Until this can be calculated, it will need to be adjusted
+	// manually, depending on how far and how big the annotation is.
+	var res = this.el_.getAttribute('data-texture-res')
+
 	this.img_ = img;
 	this.domToImage_.renderImage(
 		this.el_.innerHTML,
-		this.el_.getAttribute('data-texture-res'),
+		res,
 		img,
 		this.onImgReady_.bind(this));
 };
