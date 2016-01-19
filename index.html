@@ -23,13 +23,21 @@ body {
 </head>
 
 <body>
-  <span id="webvr-showandtell-steps-style">
+  <span id="webvr-showandtell-style">
     .webvr-showandtell-annotation {
       color: #d0d000;
       background: #804000;
     }
+    .webvr-showandtell-button {
+      color: #e0e0e0;
+      background: #808080;
+    }
   </span>
-  <ul class="webvr-showandtell-steps">
+  <div id="webvr-showandtell-buttons" class="webvr-showandtell-style">
+    <button class="webvr-showandtell-prev">Back</button>
+    <button class="webvr-showandtell-next">Next</button>
+  </div>
+  <ul class="webvr-showandtell-style">
     <li id="step1" data-name="title"
       data-texture-res="512" data-annotation-width=".5" data-annotation-height=".1"
       data-annotation-x=".35" data-annotation-y=".5"  data-annotation-z="-1"
@@ -38,7 +46,7 @@ body {
       <p>Some text to display below the title.</p>
     </li>
     <li id="step2" data-name="introduction"
-    data-texture-res="512" data-annotation-width=".5" data-annotation-height=".5"
+    data-texture-res="512" data-annotation-width=".5" data-annotation-height=".1"
     data-annotation-x=".1" data-annotation-y=".5"  data-annotation-z="-.5"
     data-previous-step="title">
       <h2>This is step 2</h2>
@@ -60,6 +68,7 @@ WebVRConfig = {
 <script src="bower_components/webvr-polyfill/build/webvr-polyfill.js"></script>
 <script src="bower_components/webvr-boilerplate/build/webvr-manager.js"></script>
 
+<script src="scripts/button.js"></script>
 <script src="scripts/domtoimage.js"></script>
 <script src="scripts/flow.js"></script>
 <script src="scripts/step.js"></script>
@@ -69,7 +78,8 @@ var showAndTell = new WebVRShowAndTell({
     modelPath: 'models/male02.obj',
     modelTexture: 'models/UV_Grid_Sm.jpg',
     stepEls: document.getElementsByTagName('li'),
-    stepsStyleEl: document.getElementById('webvr-showandtell-steps-style')    
+    styleEl: document.getElementById('webvr-showandtell-style'),
+    buttonEls: document.getElementById('webvr-showandtell-buttons').getElementsByTagName('button')
 }, console);
 showAndTell.init();
 </script>

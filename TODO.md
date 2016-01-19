@@ -1,8 +1,4 @@
 # TODO
-- stretch the textures vertically?
-	problem: we set the dimensions of the SVG manually (we have to).
-	=> we lose the ability to have fluid content.
-	Maybe render the steps offscreen once on init, to determine the dimensions and aspect ratio (x and y, not width and height).
 - add next/prev buttons.
 - display them at the bottom of the current annotation when necessary
 

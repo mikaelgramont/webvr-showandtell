@@ -1,9 +1,11 @@
-var Flow = function(stepEls, scene, threeRenderer, domToImage, logger) {
+var Flow = function(stepEls, buttonEls, scene, threeRenderer, domToImage,
+	logger) {
 	this.logger_ = logger;
 	this.scene_ = scene;
 	this.threeRenderer_ = threeRenderer;
 	this.domToImage_ = domToImage;
 	this.steps_ = this.setupSteps_(stepEls);
+	this.buttons_ = this.setupButtons_(buttonEls);
 
 	var img = document.createElement('img');
 	// img.width = "256";
@@ -31,9 +33,27 @@ Flow.prototype.setupSteps_ = function(stepEls) {
 	return steps;
 };
 
+Flow.prototype.setupButtons_ = function(buttonEls) {
+	// TODO: create two buttons: back and next.
+	// They should be tied to goToPrevious and goToNext, and have
+	// two methods to hide and reveal them.
+	
+	var back = new Button(buttonEls[0], 'back-button',
+		this.goToPrevious.bind(this), this.scene_, this.threeRenderer_,
+		this.domToImage_, this.logger_);
+
+	var next = new Button(buttonEls[1], 'next-button',
+		this.goToNext.bind(this), this.scene_, this.threeRenderer_,
+		this.domToImage_, this.logger_);
+
+	return {
+		'back': back,
+		'next ': next
+	}
+};
+
 Flow.prototype.renderCurrent = function() {
-	console.log("Rendering step", this.currentStepName_);
-	// TODO: tell all steps to clear.
+	this.logger_.log("Rendering step", this.currentStepName_);
 	this.getCurrentStep().render(this.imgs.annotation);
 };
 
@@ -54,6 +74,8 @@ Flow.prototype.goToPrevious = function() {
 	this.clearCurrentStep();
 	this.currentStepName_ = previous.getName();
 	this.renderCurrent();
+
+	// TODO: hide back button if no prev step, else reveal it.
 };
 
 Flow.prototype.goToNext = function() {
@@ -65,4 +87,6 @@ Flow.prototype.goToNext = function() {
 	this.clearCurrentStep();
 	this.currentStepName_ = next.getName();
 	this.renderCurrent();
+
+	// TODO: hide next button if no next step, else reveal it.
 };

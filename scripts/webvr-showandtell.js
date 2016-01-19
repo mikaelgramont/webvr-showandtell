@@ -12,8 +12,10 @@ WebVRShowAndTell = function(userConfig, logger) {
 		skyBoxRepeat: 5,
 		// A list of nodes, each describing a step of the show and tell.
 		stepEls: null,
-		// The element containing the styling for all .
-		stepsStyleEl: null
+		// The element containing the styling for all show and tell elements.
+		styleEl: null,
+		// A list of nodes representing the navigation buttons.
+		buttonEls: null
 	};
 
 	this.config = {};
@@ -39,7 +41,7 @@ WebVRShowAndTell = function(userConfig, logger) {
 	this.flowPromises_ = [];
 
 	this.domToImage_ = new DomToImage(
-		this.config.stepsStyleEl);
+		this.config.styleEl);
 };
 
 WebVRShowAndTell.prototype.init = function() {
@@ -182,7 +184,8 @@ WebVRShowAndTell.prototype.setupSkybox_ = function() {
 				}
 
 				var boxWidth = this.config.skyBoxWidth;
-				var geometry = new THREE.BoxGeometry(boxWidth, boxWidth, boxWidth);
+				var geometry = new THREE.BoxGeometry(boxWidth, boxWidth,
+					boxWidth);
 
 				var material = new THREE.MeshBasicMaterial({
 				  map: this.skyBoxTexture,
@@ -195,15 +198,16 @@ WebVRShowAndTell.prototype.setupSkybox_ = function() {
 
 				resolve();
 			};
-			this.imageLoader.load(this.config.skyBoxTexture, onSuccess.bind(this),
-				this.progressTracker_.bind(this), onError.bind(this));
+			this.imageLoader.load(this.config.skyBoxTexture,
+				onSuccess.bind(this), this.progressTracker_.bind(this),
+				onError.bind(this));
 		}).bind(this)));
 	}
 };
 
 WebVRShowAndTell.prototype.setupFlow_ = function() {
-	this.flow_ = new Flow(this.config.stepEls, this.scene, this.renderer,
-		this.domToImage_, this.logger_);
+	this.flow_ = new Flow(this.config.stepEls, this.config.buttonEls,
+		this.scene, this.renderer, this.domToImage_, this.logger_);
 	window.flow = this.flow_;
 };
 

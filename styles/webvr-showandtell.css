@@ -1,10 +1,10 @@
 /* Default styles for the show-and-tell. */
-.webvr-showandtell-steps {
+.webvr-showandtell-style {
 	/* This can't have display: none since it will prevent dimension
 	   calculation. */
 	height: 0;
 	overflow: hidden;
 }
-#webvr-showandtell-steps-style {
+#webvr-showandtell-style {
 	display: none;
 }
