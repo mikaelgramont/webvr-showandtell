@@ -30,7 +30,16 @@ Step.prototype.clear = function() {
 Step.prototype.onImgReady_ = function() {
 	this.logger_.log("Ready to update annotation image", this.img_.src);
 
+	var width = this.el_.getAttribute('data-annotation-width');
+	var height = this.el_.getAttribute('data-annotation-height');
+
 	var texture = new THREE.Texture();
+	texture.wrapS = THREE.RepeatWrapping;
+	texture.wrapT = THREE.RepeatWrapping;
+
+	// Stretch the texture to accomodate for non-square aspect ratio.
+	texture.repeat.set(1, height / width);
+	texture.offset.set(0, - height * 2);
 	texture.needsUpdate = true;
 	texture.image = this.img_;
 	var material = new THREE.MeshBasicMaterial({
@@ -38,8 +47,8 @@ Step.prototype.onImgReady_ = function() {
 	});
 
 	var geometry = new THREE.BoxGeometry(
-		this.el_.getAttribute('data-annotation-width'),
-		this.el_.getAttribute('data-annotation-height'),
+		width,
+		height,
 		// Constant thickness.
 		.01
 	);
