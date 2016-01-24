@@ -234,7 +234,7 @@ WebVRShowAndTell.prototype.setupGazeInput_ = function(timestamp) {
 
 			var intersects = raycaster.intersectObject(mesh, true);
 			if (intersects.length > 0) {
-				interactiveObject.onGazeActivation();
+				interactiveObject.activate();
 			}
 		}
 	}).bind(this));

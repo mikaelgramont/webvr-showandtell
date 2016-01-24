@@ -65,8 +65,9 @@ Flow.prototype.getInteractiveObjects = function() {
 };
 
 Flow.prototype.renderCurrent = function() {
-	this.getCurrentStep().render(this.imgs.annotation);
-	this.renderButtons();
+	var currentStep = this.getCurrentStep();
+	currentStep.render(this.imgs.annotation);
+	this.renderButtons(currentStep);
 };
 
 Flow.prototype.clearCurrentStep = function() {
@@ -114,16 +115,16 @@ Flow.prototype.goToNext = function() {
 	this.renderCurrent();
 };
 
-Flow.prototype.renderButtons = function() {
+Flow.prototype.renderButtons = function(currentStep) {
 	if (this.getPreviousStep()) {
 		this.buttons_.back.show();
-		this.buttons_.back.render(this.imgs.backButton);
+		this.buttons_.back.render(this.imgs.backButton, currentStep);
 	} else {
 		this.buttons_.back.hide();
 	}
 	if (this.getNextStep()) {
 		this.buttons_.next.show();
-		this.buttons_.next.render(this.imgs.nextButton);
+		this.buttons_.next.render(this.imgs.nextButton, currentStep);
 	} else {
 		this.buttons_.next.hide();
 	}

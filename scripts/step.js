@@ -19,7 +19,7 @@ Step.prototype.render = function(img) {
 	// This attribute controls the resolution of the texture.
 	// Until this can be calculated, it will need to be adjusted
 	// manually, depending on how far and how big the annotation is.
-	var res = this.el_.getAttribute('data-texture-res')
+	var res = this.el_.getAttribute('data-texture-res') || 512;
 
 	this.img_ = img;
 	this.domToImage_.renderImage(
@@ -69,12 +69,16 @@ Step.prototype.onImgReady_ = function() {
 	);
 
 	// Remove the previous annotation - if any.
-	var current = this.scene_.getObjectByName(this.getAnnotationName());
+	var current = this.getAnnotationMesh();
 	if (current) {
 		this.scene_.remove(current);
 	}
 
 	this.scene_.add(this.mesh_);
+};
+
+Step.prototype.getAnnotationMesh = function() {
+	return this.scene_.getObjectByName(this.getAnnotationName());
 };
 
 Step.prototype.getAnnotationName = function() {
