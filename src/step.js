@@ -96,3 +96,5 @@ Step.prototype.getPreviousStepName = function() {
 Step.prototype.getNextStepName = function() {
 	return this.el_.getAttribute('data-next-step');
 };
+
+module.exports = Step;

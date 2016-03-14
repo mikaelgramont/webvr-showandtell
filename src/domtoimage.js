@@ -25,3 +25,5 @@ DomToImage.prototype.renderImage = function(html, res, img, onReady) {
 	}).bind(this);
 	img.src = url;	
 };
+
+module.exports = DomToImage;

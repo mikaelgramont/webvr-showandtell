@@ -90,3 +90,5 @@ Button.prototype.activate = function() {
 	this.logger_.log('activate', this);
 	this.el_.dispatchEvent(new Event('click'));
 };
+
+module.exports = Button;
