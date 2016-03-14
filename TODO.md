@@ -1,3 +1,12 @@
+# SETUP
+- use webpack w/ babel to package everything
+- update index.html to use the bundle
+
+# SERVING
+- figureo out how to serve from github
+
+
+
 # TODO
 - add next/prev buttons:
 	- build the render function
