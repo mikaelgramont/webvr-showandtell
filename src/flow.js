@@ -1,3 +1,6 @@
+var Button = require("./button");
+var Step = require("./step");
+
 var Flow = function(stepEls, buttonEls, scene, threeRenderer, domToImage,
 	logger) {
 	this.logger_ = logger;
@@ -129,3 +132,5 @@ Flow.prototype.renderButtons = function(currentStep) {
 		this.buttons_.next.hide();
 	}
 };
+
+module.exports = Flow;

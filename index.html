@@ -69,19 +69,5 @@ WebVRConfig = {
 <script src="bower_components/webvr-polyfill/build/webvr-polyfill.js"></script>
 <script src="bower_components/webvr-boilerplate/build/webvr-manager.js"></script>
 
-<script src="scripts/button.js"></script>
-<script src="scripts/domtoimage.js"></script>
-<script src="scripts/flow.js"></script>
-<script src="scripts/step.js"></script>
-<script src="scripts/webvr-showandtell.js"></script>
-<script>
-var showAndTell = new WebVRShowAndTell({
-    modelPath: 'models/male02.obj',
-    modelTexture: 'models/UV_Grid_Sm.jpg',
-    stepEls: document.getElementsByTagName('li'),
-    styleEl: document.getElementById('webvr-showandtell-style'),
-    buttonEls: document.getElementById('webvr-showandtell-buttons').getElementsByTagName('button')
-}, console);
-showAndTell.init();
-</script>
+<script src="dist/bundle.js"></script>
 </html>

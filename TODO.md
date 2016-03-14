@@ -1,13 +1,11 @@
 # SETUP
-- use webpack w/ babel to package everything
-- update index.html to use the bundle
-
-# SERVING
-- figureo out how to serve from github
-
+    This will generate scripts/bundle.js: npm run build
+    Go to http://localhost:8080/webpack-dev-server/ after running: npm run serve
 
 
 # TODO
+- figure out how to serve from github
+
 - add next/prev buttons:
 	- build the render function
 	- see what can be abstracted into a parent object between button and step

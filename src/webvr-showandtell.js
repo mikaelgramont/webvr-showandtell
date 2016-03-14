@@ -1,4 +1,7 @@
-WebVRShowAndTell = function(userConfig, logger) {
+var DomToImage = require("./domtoimage");
+var Flow = require("./flow");
+
+var WebVRShowAndTell = function(userConfig, logger) {
 	this.defaultConfig_ = {
 		// The relative or absolute path to the main model.
 		modelPath: null,
@@ -253,3 +256,5 @@ WebVRShowAndTell.prototype.start = function() {
 
 	this.flow_.renderCurrent();
 }
+
+module.exports = WebVRShowAndTell;
