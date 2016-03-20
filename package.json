@@ -2,7 +2,7 @@
   "name": "webvr-showandtell",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "webpack",
     "serve": "webpack-dev-server --progress --colors"
@@ -11,12 +11,17 @@
     "type": "git",
     "url": "git+https://github.com/mikaelgramont/webvr-showandtell.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Mikael Gramont",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/mikaelgramont/webvr-showandtell/issues"
   },
   "homepage": "https://github.com/mikaelgramont/webvr-showandtell#readme",
+  "dependencies": {
+    "three": "^0.73.2",
+    "webvr-boilerplate": "^0.3.8",
+    "webvr-polyfill": "^0.2.7"
+  },
   "devDependencies": {
     "babel-core": "^6.4.5",
     "babel-loader": "^6.2.1",
