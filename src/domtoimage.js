@@ -3,12 +3,13 @@ var DomToImage = function(styleEl) {
 
 	/* Clever hackery inspired by
 	  https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Drawing_DOM_objects_into_a_canvas */
-	this.SVG_TEMPLATE_ = '<svg xmlns="http://www.w3.org/2000/svg"><foreignObject class="svg-content" width="$width" height="$height"><style>$style</style><div class="webvr-showandtell-annotation" xmlns="http://www.w3.org/1999/xhtml" style="width:100%; height:100%">$content</div></foreignObject></svg>';
+	this.SVG_TEMPLATE_ = '<svg xmlns="http://www.w3.org/2000/svg"><foreignObject class="svg-content" width="$width" height="$height"><style>$style</style><div class="$class" xmlns="http://www.w3.org/1999/xhtml" style="width:100%; height:100%">$content</div></foreignObject></svg>';
 	this.DOMURL_ = window.URL || window.webkitURL || window;
 }
 
-DomToImage.prototype.renderImage = function(html, res, img, onReady) {
+DomToImage.prototype.renderImage = function(html, className, res, img, onReady) {
 	var data = (this.SVG_TEMPLATE_.
+		replace('$class', className).
 		replace('$width', res).
 		replace('$height', res).
 		replace('$style', this.style).

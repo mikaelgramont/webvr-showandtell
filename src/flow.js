@@ -20,6 +20,10 @@ var Flow = function(stepEls, buttonEls, scene, threeRenderer, domToImage,
 	}
 }
 
+Flow.prototype.getButtons = function() {
+	return this.buttons_;
+};
+
 Flow.prototype.setupSteps_ = function(stepEls) {
 	// Map containing all steps for this flow.
 	var steps = {};
@@ -52,7 +56,7 @@ Flow.prototype.setupButtons_ = function(buttonEls) {
 	}
 };
 
-Flow.prototype.getInteractiveObjects = function() {
+Flow.prototype.getCurrentInteractiveObjects = function() {
 	var objs = [];
 	if (this.getPreviousStep()) {
 		objs.push(this.buttons_.back);
@@ -69,7 +73,7 @@ Flow.prototype.getInteractiveObjects = function() {
 
 Flow.prototype.renderCurrent = function() {
 	var currentStep = this.getCurrentStep();
-	currentStep.render(this.imgs.annotation);
+	currentStep.rasterize(this.imgs.annotation);
 	this.renderButtons(currentStep);
 };
 
@@ -92,8 +96,6 @@ Flow.prototype.getNextStep = function() {
 };
 
 Flow.prototype.goToPrevious = function() {
-	this.logger_.log('goToPrevious');
-
 	var previous = this.getPreviousStep();
 	if (!previous) {
 		this.logger_.log('No previous step');
@@ -106,8 +108,6 @@ Flow.prototype.goToPrevious = function() {
 };
 
 Flow.prototype.goToNext = function() {
-	this.logger_.log('goToNext');
-
 	var next = this.getNextStep();
 	if (!next) {
 		this.logger_.log('No next step');
@@ -119,15 +119,23 @@ Flow.prototype.goToNext = function() {
 };
 
 Flow.prototype.renderButtons = function(currentStep) {
+	this.logger_.info("Flow.renderButtons");
+	var hasBack = !!this.scene_.getObjectByName(this.buttons_.back.getName());
+	var hasNext = !!this.scene_.getObjectByName(this.buttons_.next.getName());
+	
 	if (this.getPreviousStep()) {
 		this.buttons_.back.show();
-		this.buttons_.back.render(this.imgs.backButton, currentStep);
+		if (!hasBack) {
+			this.buttons_.back.rasterize(this.imgs.backButton, currentStep);
+		}
 	} else {
 		this.buttons_.back.hide();
 	}
 	if (this.getNextStep()) {
 		this.buttons_.next.show();
-		this.buttons_.next.render(this.imgs.nextButton, currentStep);
+		if (!hasNext) {
+			this.buttons_.next.rasterize(this.imgs.nextButton, currentStep);
+		}
 	} else {
 		this.buttons_.next.hide();
 	}

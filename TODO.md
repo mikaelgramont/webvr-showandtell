@@ -1,6 +1,7 @@
 # SETUP
     This will generate scripts/bundle.js: npm run build
-    Go to http://localhost:8080/webpack-dev-server/ after running: npm run serve
+    Or
+    Go to http://localhost:8080/webpack-dev-server --hot after running: npm run serve
 
 
 # TODO

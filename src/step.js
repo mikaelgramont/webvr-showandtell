@@ -13,7 +13,7 @@ var Step = function(index, el, name, scene, threeRenderer, domToImage, logger) {
 	this.next_ = null;
 };
 
-Step.prototype.render = function(img) {
+Step.prototype.rasterize = function(img) {
 	this.logger_.log("Rendering step", this.name_);
 
 	// This attribute controls the resolution of the texture.
@@ -24,6 +24,7 @@ Step.prototype.render = function(img) {
 	this.img_ = img;
 	this.domToImage_.renderImage(
 		this.el_.innerHTML,
+		'webvr-showandtell-annotation',
 		res,
 		img,
 		this.onImgReady_.bind(this));
@@ -37,8 +38,8 @@ Step.prototype.clear = function() {
 Step.prototype.onImgReady_ = function() {
 	this.logger_.log("Ready to update annotation image", this.img_.src);
 
-	var width = this.el_.getAttribute('data-annotation-width');
-	var height = this.el_.getAttribute('data-annotation-height');
+	var width = this.el_.getAttribute('data-mesh-width');
+	var height = this.el_.getAttribute('data-mesh-height');
 
 	var texture = new THREE.Texture();
 	texture.wrapS = THREE.RepeatWrapping;
@@ -63,9 +64,9 @@ Step.prototype.onImgReady_ = function() {
 	this.mesh_ = new THREE.Mesh(geometry, material);
 	this.mesh_.name = this.getAnnotationName();
 	this.mesh_.position.set(
-		this.el_.getAttribute('data-annotation-x'),
-		this.el_.getAttribute('data-annotation-y'),
-		this.el_.getAttribute('data-annotation-z')
+		this.el_.getAttribute('data-mesh-x'),
+		this.el_.getAttribute('data-mesh-y'),
+		this.el_.getAttribute('data-mesh-z')
 	);
 
 	// Remove the previous annotation - if any.
@@ -87,6 +88,10 @@ Step.prototype.getAnnotationName = function() {
 
 Step.prototype.getName = function() {
 	return this.name_;
+};
+
+Step.prototype.hasPrevious = function() {
+	return !this.el_.getPreviousStepName();
 };
 
 Step.prototype.getPreviousStepName = function() {

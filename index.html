@@ -23,6 +23,9 @@ body {
 </head>
 
 <body>
+  <button id="run" style="display:none">Run</button>
+  <button id="single-frame" style="display:none">Single frame</button>
+  <button id="pause">Pause</button>
   <span id="webvr-showandtell-style">
     .webvr-showandtell-annotation {
       padding: .5em;
@@ -30,25 +33,39 @@ body {
       background: #804000;
     }
     .webvr-showandtell-button {
-      color: #e0e0e0;
+      width: 12em;
+      height: 3em;
+      background: none;
+      color: white;
+      border: 0;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-family: arial;
       background: #808080;
+      text-align: center;
     }
   </span>
   <div id="webvr-showandtell-buttons" class="webvr-showandtell-style">
-    <button class="webvr-showandtell-prev">Back</button>
-    <button class="webvr-showandtell-next">Next</button>
+    <button class="webvr-showandtell-prev"
+      data-mesh-width=".2" data-mesh-height=".1"
+      data-mesh-x="-.25" data-mesh-y="0"  data-mesh-z="-.8"
+      >Back</button>
+    <button class="webvr-showandtell-next"
+      data-mesh-width=".25" data-mesh-height=".1"
+      data-mesh-x=".25" data-mesh-y="0"  data-mesh-z="-.8"
+      >Next</button>
   </div>
   <ul class="webvr-showandtell-style">
     <li id="step1" data-name="title"
-      data-texture-res="512" data-annotation-width=".5" data-annotation-height=".1"
-      data-annotation-x=".35" data-annotation-y=".5"  data-annotation-z="-1"
+      data-texture-res="512" data-mesh-width=".5" data-mesh-height=".1"
+      data-mesh-x=".35" data-mesh-y=".5"  data-mesh-z="-1"
       data-next-step="introduction">
       <h2>This is step 1</h2>
       <p>Some text to display below the title.</p>
     </li>
     <li id="step2" data-name="introduction"
-    data-texture-res="512" data-annotation-width=".5" data-annotation-height=".1"
-    data-annotation-x=".1" data-annotation-y=".5"  data-annotation-z="-.5"
+    data-texture-res="512" data-mesh-width=".5" data-mesh-height=".1"
+    data-mesh-x=".1" data-mesh-y=".5"  data-mesh-z="-.5"
     data-previous-step="title">
       <h2>This is step 2</h2>
       <p>Some more text to display.</p>
@@ -66,6 +83,7 @@ WebVRConfig = {
 <script src="bower_components/threejs/examples/js/controls/VRControls.js"></script>
 <script src="bower_components/threejs/examples/js/effects/VREffect.js"></script>
 <script src="bower_components/webvr-polyfill/build/webvr-polyfill.js"></script>
-<script src="bower_components/webvr-boilerplate/build/webvr-manager.js"></script><script src="dist/bundle.js"></script>
+<script src="bower_components/webvr-boilerplate/build/webvr-manager.js"></script>
+<script src="dist/bundle.js"></script>
 
 </html>

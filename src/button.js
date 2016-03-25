@@ -13,12 +13,17 @@ var Button = function(el, name, clickCallback, scene, threeRenderer,
 	this.el_.addEventListener('click', clickCallback);
 };
 
-Button.prototype.render = function(img, currentStep) {
+Button.prototype.getName = function() {
+	return this.name_;
+}
+
+Button.prototype.rasterize = function(img, currentStep) {
 	var res = this.el_.getAttribute('data-texture-res') || 256;
 
 	this.img_ = img;
 	this.domToImage_.renderImage(
 		this.el_.innerHTML,
+		'webvr-showandtell-button',
 		res,
 		img,
 		this.onImgReady_.bind(this, currentStep));
@@ -27,13 +32,17 @@ Button.prototype.render = function(img, currentStep) {
 Button.prototype.getMesh = function() {
 	return this.mesh_;
 };
-
+	
 Button.prototype.onImgReady_ = function(currentStep) {
 	var currentAnnotationMesh = currentStep.getAnnotationMesh();	
 	this.logger_.log("Ready to update button image", this.img_.src, currentAnnotationMesh);
 
-	var width = .2;
-	var height = .1;
+	var width = this.el_.getAttribute('data-mesh-width');
+	var height = this.el_.getAttribute('data-mesh-height');
+
+	var x = this.el_.getAttribute('data-mesh-x');
+	var y = this.el_.getAttribute('data-mesh-y');
+	var z = this.el_.getAttribute('data-mesh-z');
 
 	var texture = new THREE.Texture();
 	texture.wrapS = THREE.RepeatWrapping;
@@ -59,11 +68,8 @@ Button.prototype.onImgReady_ = function(currentStep) {
 	this.mesh_.name = this.name_;
 
 	// TODO: Use currentAnnotationMesh for position.
-	this.mesh_.position.set(
-		.0,
-		.0,
-		-.8
-	);
+	this.mesh_.position.set(x, y, z);
+	this.logger_.log("Button position:", x, y, z, this);
 
 	this.scene_.add(this.mesh_);
 };
@@ -73,6 +79,7 @@ Button.prototype.getObjectByName = function() {
 };
 
 Button.prototype.hide = function() {
+	this.logger_.log("Hiding button", this);
 	if (!this.mesh_) {
 		return;
 	}
@@ -80,6 +87,7 @@ Button.prototype.hide = function() {
 };
 
 Button.prototype.show = function() {
+	this.logger_.log("Showing button", this);
 	if (!this.mesh_) {
 		return;
 	}

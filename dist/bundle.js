@@ -394,7 +394,7 @@
 		};
 	};
 
-	Flow.prototype.getInteractiveObjects = function () {
+	Flow.prototype.getCurrentInteractiveObjects = function () {
 		var objs = [];
 		if (this.getPreviousStep()) {
 			objs.push(this.buttons_.back);
@@ -490,7 +490,7 @@
 		this.domToImage_ = domToImage;
 		this.logger_ = logger;
 
-		this.logger_.log('Creating show-and-tell button', this);
+		this.logger_.log('Creating show-and-tell button YOOOOO', this);
 
 		this.el_.addEventListener('click', clickCallback);
 	};
@@ -510,8 +510,10 @@
 		var currentAnnotationMesh = currentStep.getAnnotationMesh();
 		this.logger_.log("Ready to update button image", this.img_.src, currentAnnotationMesh);
 
-		var width = .2;
-		var height = .1;
+		var width = this.el_.getAttribute('data-annotation-width');
+		var height = this.el_.getAttribute('data-annotation-height');
+		alert('yo');
+		this.logger_.log("Button dimensions", this, width, height);
 
 		var texture = new THREE.Texture();
 		texture.wrapS = THREE.RepeatWrapping;
@@ -604,8 +606,8 @@
 	Step.prototype.onImgReady_ = function () {
 		this.logger_.log("Ready to update annotation image", this.img_.src);
 
-		var width = this.el_.getAttribute('data-annotation-width');
-		var height = this.el_.getAttribute('data-annotation-height');
+		var width = this.el_.getAttribute('data-mesh-width');
+		var height = this.el_.getAttribute('data-mesh-height');
 
 		var texture = new THREE.Texture();
 		texture.wrapS = THREE.RepeatWrapping;
@@ -626,7 +628,7 @@
 
 		this.mesh_ = new THREE.Mesh(geometry, material);
 		this.mesh_.name = this.getAnnotationName();
-		this.mesh_.position.set(this.el_.getAttribute('data-annotation-x'), this.el_.getAttribute('data-annotation-y'), this.el_.getAttribute('data-annotation-z'));
+		this.mesh_.position.set(this.el_.getAttribute('data-mesh-x'), this.el_.getAttribute('data-mesh-y'), this.el_.getAttribute('data-mesh-z'));
 
 		// Remove the previous annotation - if any.
 		var current = this.getAnnotationMesh();

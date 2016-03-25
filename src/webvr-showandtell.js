@@ -45,6 +45,26 @@ var WebVRShowAndTell = function(userConfig, logger) {
 
 	this.domToImage_ = new DomToImage(
 		this.config.styleEl);
+	
+	this.continuousRun = true;
+	document.getElementById("run").addEventListener("click", (function() {
+		this.continuousRun = true;
+		document.getElementById("run").style.display = "none";
+		document.getElementById("single-frame").style.display = "none";
+		document.getElementById("pause").style.display = "initial";
+		this.animate_();
+	}).bind(this));
+	document.getElementById("pause").addEventListener("click", (function() {
+		this.continuousRun = false;
+		document.getElementById("run").style.display = "initial";
+		document.getElementById("single-frame").style.display = "initial";
+		document.getElementById("pause").style.display = "none";
+	}).bind(this));
+	document.getElementById("single-frame").addEventListener("click", (function() {
+		this.animate_();
+		this.logger_.info("buttons", this.flow_.getButtons());
+		this.logger_.info("scene", this.scene);
+	}).bind(this));
 };
 
 WebVRShowAndTell.prototype.init = function() {
@@ -211,7 +231,6 @@ WebVRShowAndTell.prototype.setupSkybox_ = function() {
 WebVRShowAndTell.prototype.setupFlow_ = function() {
 	this.flow_ = new Flow(this.config.stepEls, this.config.buttonEls,
 		this.scene, this.renderer, this.domToImage_, this.logger_);
-	window.flow = this.flow_;
 };
 
 /**
@@ -226,7 +245,7 @@ WebVRShowAndTell.prototype.setupGazeInput_ = function(timestamp) {
 		vector.unproject(this.camera);
 		raycaster.set(this.camera.position,
 			vector.sub(this.camera.position).normalize());
-		var interactiveObjects = this.flow_.getInteractiveObjects();
+		var interactiveObjects = this.flow_.getCurrentInteractiveObjects();
 
 		for (var i = 0, l = interactiveObjects.length; i < l; i++) {
 			var interactiveObject = interactiveObjects[i];
@@ -244,11 +263,13 @@ WebVRShowAndTell.prototype.setupGazeInput_ = function(timestamp) {
 };
 
 WebVRShowAndTell.prototype.animate_ = function(timestamp) {
-  this.controls.update();
+	this.controls.update();
 
-  this.VRManager.render(this.scene, this.camera, timestamp);
+	this.VRManager.render(this.scene, this.camera, timestamp);
 
-  requestAnimationFrame(this.animate_.bind(this));	
+	if (this.continuousRun) {
+		requestAnimationFrame(this.animate_.bind(this));
+	}
 };
 
 WebVRShowAndTell.prototype.start = function() {
