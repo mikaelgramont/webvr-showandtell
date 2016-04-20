@@ -1,3 +1,8 @@
+todo:
+- install test environment
+- use brfs to serve static files from npm installs
+
+
 # SETUP
     This will generate scripts/bundle.js: npm run build
     Or
