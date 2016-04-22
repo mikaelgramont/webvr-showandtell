@@ -1,3 +1,5 @@
+var THREE = require("three");
+
 var Step = function(index, el, name, scene, threeRenderer, domToImage, logger) {
 	this.index_ = index;
 	this.el_ = el;

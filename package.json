@@ -12,10 +12,16 @@
   "bugs": {
     "url": "https://github.com/mikaelgramont/webvr-showandtell/issues"
   },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": "shim.js",  
   "scripts": {
-    "build": "browserify js/index.js -o dist/bundle.js",
-    "watch": "watchify js/index.js -o dist/bundle.js",
-    "debug-build": "browserify --debug js/index.js > dist/bundle-debug.js",
+    "build": "browserify js/index.js -o dist/app-bundle.js",
+    "build-debug": "browserify --debug js/index.js > dist/app-bundle-debug.js",
+    "watch": "watchify js/index.js -o dist/app-bundle.js",
     "tests": "karma start"
   },
   "homepage": "https://github.com/mikaelgramont/webvr-showandtell#readme",
@@ -30,6 +36,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
+    "browserify-shim": "^3.8.12",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.22",
     "karma-browserify": "^5.0.3",

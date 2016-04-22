@@ -2,3 +2,6 @@ bower_components/
 node_modules/
 .DS_Store
 .gitignore
+dist/threejs/
+dist/webvr-boilerplate/
+dist/webvr-polyfill/

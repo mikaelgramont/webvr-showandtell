@@ -1,3 +1,5 @@
+var THREE = require("three");
+
 var Button = function(el, name, clickCallback, scene, threeRenderer,
 	domToImage, logger) {
 

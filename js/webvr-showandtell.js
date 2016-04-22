@@ -1,5 +1,11 @@
+// THREE.js dependencies.
+require("../js/vendor/three/OBJLoader");
+require("../js/vendor/three/VRControls");
+require("../js/vendor/three/VREffect");
+
 var DomToImage = require("./domtoimage");
 var Flow = require("./flow");
+
 
 var WebVRShowAndTell = function(userConfig, logger) {
 	this.defaultConfig_ = {
