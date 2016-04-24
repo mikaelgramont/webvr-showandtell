@@ -21,14 +21,15 @@
   "scripts": {
     "build": "browserify js/index.js -o dist/app-bundle.js",
     "build-debug": "browserify --debug js/index.js > dist/app-bundle-debug.js",
+    "copy": "cp node_modules/three/three.js dist/; cp node_modules/three/examples/js/controls/VRControls.js js/vendor/three/; cp node_modules/three/examples/js/effects/VREffect.js js/vendor/three/; cp node_modules/three/examples/js/loaders/OBJLoader.js js/vendor/three/; cp node_modules/webvr-boilerplate/build/webvr-manager.js dist/; cp node_modules/webvr-polyfill/build/webvr-polyfill.js dist/;",
     "watch": "watchify js/index.js -o dist/app-bundle.js",
-    "tests": "karma start"
+    "test": "karma start"
   },
   "homepage": "https://github.com/mikaelgramont/webvr-showandtell#readme",
   "dependencies": {
-    "three": "^0.73.2",
-    "webvr-boilerplate": "^0.3.8",
-    "webvr-polyfill": "^0.2.7"
+    "three": "^0.75",
+    "webvr-boilerplate": "^0.4.1",
+    "webvr-polyfill": "^0.9.2"
   },
   "devDependencies": {
     "babel-core": "^6.7.6",

@@ -1,12 +1,5 @@
-todo:
-- install test environment
-- use brfs to serve static files from npm installs
-
-
-# SETUP
-    This will generate scripts/bundle.js: npm run build
-    Or
-    Go to http://localhost:8080/webpack-dev-server --hot after running: npm run serve
+- WebVRboilerplate serves its THREE/WebVRpolyfill dependencies directly from node_modules.
+Not the cleanest. Simple workaround for this project: add a script entry to package.json to copy dependencies from node_modules into a public folder.
 
 
 # TODO
